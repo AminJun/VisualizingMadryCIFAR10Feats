@@ -38,6 +38,7 @@ def run_eval(checkpoint, train=False, num_eval_examples=None, data_dir=None):
     num_batches = int(math.ceil(num_eval_examples / eval_batch_size))
     y_pred = []  # label accumulator
     red_neck = []
+    loj_eet = []
 
     with tf.Session() as sess:
         # Restore the checkpoint
@@ -52,12 +53,13 @@ def run_eval(checkpoint, train=False, num_eval_examples=None, data_dir=None):
             y_batch = y_nat[bstart:bend]
             dict_clean = {model.x_input: x_batch,
                           model.y_input: y_batch}
-            cur_corr, y_pred_batch, neck = sess.run([model.num_correct, model.y_pred, model.neck],
+            cur_corr, y_pred_batch, neck, logitsez = sess.run([model.num_correct, model.y_pred, model.neck, model.pre_softmax],
                                                     feed_dict=dict_clean)
 
             total_corr += cur_corr
             y_pred.append(y_pred_batch)
             red_neck.append(neck)
+            loj_eet.append(logitsez)
             # print('ibatch: ', ibatch, '/', num_batches)
 
     accuracy = total_corr / num_eval_examples
@@ -67,6 +69,8 @@ def run_eval(checkpoint, train=False, num_eval_examples=None, data_dir=None):
     if train:
         test_str = 'train'
     np.save(sys.argv[1] + test_str + '_red_neck.npy', np.concatenate(red_neck,
+                                                                     axis=0))
+    np.save(sys.argv[1] + test_str + '_logits.npy', np.concatenate(loj_eet,
                                                                      axis=0))
     # print('Output saved at pred.npy')
 

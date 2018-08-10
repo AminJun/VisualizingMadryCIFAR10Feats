@@ -2,3 +2,16 @@ secret/
 models/
 submitted_attacks/
 __pycache__/
+
+# the numpy file
+*.npy
+
+# the saved models -> zips
+*.zip
+
+
+# the data
+cifar10_data/*
+
+# the compiled python files
+*.pyc
